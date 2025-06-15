@@ -119,7 +119,7 @@ export class DatabaseStorage implements IStorage {
     
     const conditions = [];
     
-    if (filters?.category && filters.category !== "All Categories") {
+    if (filters?.category && filters.category !== "all") {
       conditions.push(eq(inventoryItems.category, filters.category));
     }
     
@@ -151,15 +151,15 @@ export class DatabaseStorage implements IStorage {
     const items = await query;
     
     // Apply status filter after fetch since it requires calculated fields
-    if (filters?.status && filters.status !== "All Items") {
+    if (filters?.status && filters.status !== "all") {
       const now = new Date();
       const soonDate = new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000);
       
       return items.filter(item => {
         if (filters.status === "In Stock") {
-          return item.quantity > item.lowStockThreshold;
+          return item.quantity > (item.lowStockThreshold || 0);
         } else if (filters.status === "Low Stock") {
-          return item.quantity <= item.lowStockThreshold && item.quantity > 0;
+          return item.quantity <= (item.lowStockThreshold || 0) && item.quantity > 0;
         } else if (filters.status === "Out of Stock") {
           return item.quantity === 0;
         } else if (filters.status === "Expiring Soon") {
@@ -257,7 +257,7 @@ export class DatabaseStorage implements IStorage {
     
     const conditions = [];
     
-    if (filters?.donationType) {
+    if (filters?.donationType && filters.donationType !== "all") {
       conditions.push(eq(donations.donationType, filters.donationType));
     }
     

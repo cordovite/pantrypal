@@ -22,8 +22,8 @@ export default function Inventory() {
   const [editingItem, setEditingItem] = useState<InventoryItem | null>(null);
   const [filters, setFilters] = useState({
     search: "",
-    category: "",
-    status: "",
+    category: "all",
+    status: "all",
     sortBy: "name",
     sortOrder: "asc" as "asc" | "desc",
   });
@@ -157,7 +157,7 @@ export default function Inventory() {
                 <SelectValue placeholder="All Categories" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Categories</SelectItem>
+                <SelectItem value="all">All Categories</SelectItem>
                 <SelectItem value="Canned Goods">Canned Goods</SelectItem>
                 <SelectItem value="Dry Goods">Dry Goods</SelectItem>
                 <SelectItem value="Fresh Produce">Fresh Produce</SelectItem>
@@ -174,7 +174,7 @@ export default function Inventory() {
                 <SelectValue placeholder="All Items" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Items</SelectItem>
+                <SelectItem value="all">All Items</SelectItem>
                 <SelectItem value="In Stock">In Stock</SelectItem>
                 <SelectItem value="Low Stock">Low Stock</SelectItem>
                 <SelectItem value="Out of Stock">Out of Stock</SelectItem>
