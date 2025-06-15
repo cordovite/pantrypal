@@ -20,7 +20,7 @@ export default function Donations() {
   const { isAuthenticated, isLoading } = useAuth();
   const [showAddModal, setShowAddModal] = useState(false);
   const [filters, setFilters] = useState({
-    donationType: "",
+    donationType: "all",
     dateFrom: "",
     dateTo: "",
   });
@@ -202,7 +202,7 @@ export default function Donations() {
                 <SelectValue placeholder="All Types" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Types</SelectItem>
+                <SelectItem value="all">All Types</SelectItem>
                 <SelectItem value="food">Food</SelectItem>
                 <SelectItem value="monetary">Monetary</SelectItem>
                 <SelectItem value="other">Other</SelectItem>

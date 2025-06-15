@@ -20,7 +20,7 @@ export default function Distributions() {
   const { isAuthenticated, isLoading } = useAuth();
   const [showAddModal, setShowAddModal] = useState(false);
   const [filters, setFilters] = useState({
-    status: "",
+    status: "all",
     dateFrom: "",
     dateTo: "",
   });
@@ -226,7 +226,7 @@ export default function Distributions() {
                 <SelectValue placeholder="All Statuses" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="">All Statuses</SelectItem>
+                <SelectItem value="all">All Statuses</SelectItem>
                 <SelectItem value="scheduled">Scheduled</SelectItem>
                 <SelectItem value="active">Active</SelectItem>
                 <SelectItem value="completed">Completed</SelectItem>
