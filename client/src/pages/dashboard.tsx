@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/useAuth";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
@@ -8,10 +8,12 @@ import { Download, Plus } from "lucide-react";
 import StatsCards from "@/components/dashboard/stats-cards";
 import RecentActivity from "@/components/dashboard/recent-activity";
 import AlertItems from "@/components/dashboard/alert-items";
+import AddItemModal from "@/components/inventory/add-item-modal";
 
 export default function Dashboard() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading } = useAuth();
+  const [showQuickAddModal, setShowQuickAddModal] = useState(false);
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -68,7 +70,7 @@ export default function Dashboard() {
               <Download className="-ml-1 mr-2 h-5 w-5" />
               Export Report
             </Button>
-            <Button>
+            <Button onClick={() => setShowQuickAddModal(true)}>
               <Plus className="-ml-1 mr-2 h-5 w-5" />
               Quick Add Item
             </Button>
@@ -110,6 +112,12 @@ export default function Dashboard() {
         <RecentActivity activity={recentActivity} isLoading={activityLoading} />
         <AlertItems alerts={alerts} isLoading={alertsLoading} />
       </div>
+
+      {/* Quick Add Item Modal */}
+      <AddItemModal
+        open={showQuickAddModal}
+        onOpenChange={setShowQuickAddModal}
+      />
     </div>
   );
 }
