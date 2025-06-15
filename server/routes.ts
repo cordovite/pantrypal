@@ -109,12 +109,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/inventory", isAuthenticated, async (req: any, res) => {
     try {
+      console.log("Received inventory item data:", req.body);
       const validatedData = insertInventoryItemSchema.parse(req.body);
+      console.log("Validated data:", validatedData);
       const userId = req.user.claims.sub;
       const item = await storage.createInventoryItem(validatedData, userId);
       res.status(201).json(item);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error("Validation error:", error.errors);
         return res.status(400).json({ message: "Invalid data", errors: error.errors });
       }
       console.error("Error creating inventory item:", error);

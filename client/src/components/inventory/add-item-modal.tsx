@@ -77,6 +77,7 @@ export default function AddItemModal({ open, onOpenChange }: AddItemModalProps) 
       onOpenChange(false);
     },
     onError: (error) => {
+      console.error("Add item error:", error);
       if (isUnauthorizedError(error)) {
         toast({
           title: "Unauthorized",
@@ -90,13 +91,14 @@ export default function AddItemModal({ open, onOpenChange }: AddItemModalProps) 
       }
       toast({
         title: "Error",
-        description: "Failed to add item",
+        description: `Failed to add item: ${error.message || "Unknown error"}`,
         variant: "destructive",
       });
     },
   });
 
   const onSubmit = (data: InsertInventoryItem) => {
+    console.log("Form data being submitted:", data);
     createItemMutation.mutate(data);
   };
 
