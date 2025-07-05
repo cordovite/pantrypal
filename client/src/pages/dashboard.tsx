@@ -9,11 +9,13 @@ import StatsCards from "@/components/dashboard/stats-cards";
 import RecentActivity from "@/components/dashboard/recent-activity";
 import AlertItems from "@/components/dashboard/alert-items";
 import AddItemModal from "@/components/inventory/add-item-modal";
+import { useLocation } from "wouter";
 
 export default function Dashboard() {
   const { toast } = useToast();
   const { isAuthenticated, isLoading } = useAuth();
   const [showQuickAddModal, setShowQuickAddModal] = useState(false);
+  const [, setLocation] = useLocation();
 
   useEffect(() => {
     if (!isLoading && !isAuthenticated) {
@@ -92,7 +94,10 @@ export default function Dashboard() {
                 <p className="text-sm text-red-800">
                   <strong>{alerts.filter(a => a.type === "low_stock").length} items</strong> are running low on stock and{" "}
                   <strong>{alerts.filter(a => a.type === "expiring").length} items</strong> expire within the next 7 days.
-                  <button className="font-medium underline text-red-800 hover:text-red-600 ml-1">
+                  <button 
+                    onClick={() => setLocation('/inventory')}
+                    className="font-medium underline text-red-800 hover:text-red-600 ml-1"
+                  >
                     View details
                   </button>
                 </p>
