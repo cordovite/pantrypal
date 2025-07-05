@@ -31,12 +31,14 @@ interface AddDistributionModalProps {
 export default function AddDistributionModal({ open, onOpenChange }: AddDistributionModalProps) {
   const { toast } = useToast();
   
-  const form = useForm<InsertDistributionEvent>({
-    resolver: zodResolver(insertDistributionEventSchema),
+  // Create a form type that accepts string for eventDate
+  type FormData = Omit<InsertDistributionEvent, 'eventDate'> & { eventDate: string };
+
+  const form = useForm<FormData>({
     defaultValues: {
       name: "",
       description: "",
-      eventDate: new Date().toISOString(),
+      eventDate: "",
       location: "",
       maxFamilies: undefined,
       registeredFamilies: 0,
@@ -80,8 +82,13 @@ export default function AddDistributionModal({ open, onOpenChange }: AddDistribu
     },
   });
 
-  const onSubmit = (data: InsertDistributionEvent) => {
-    createEventMutation.mutate(data);
+  const onSubmit = (data: FormData) => {
+    // Convert eventDate string to Date object
+    const formattedData: InsertDistributionEvent = {
+      ...data,
+      eventDate: new Date(data.eventDate)
+    };
+    createEventMutation.mutate(formattedData);
   };
 
   return (
@@ -134,9 +141,8 @@ export default function AddDistributionModal({ open, onOpenChange }: AddDistribu
                   <FormControl>
                     <Input
                       type="datetime-local"
-                      {...field}
-                      value={field.value ? new Date(field.value).toISOString().slice(0, 16) : ""}
-                      onChange={(e) => field.onChange(new Date(e.target.value).toISOString())}
+                      value={field.value || ""}
+                      onChange={(e) => field.onChange(e.target.value)}
                     />
                   </FormControl>
                   <FormMessage />
