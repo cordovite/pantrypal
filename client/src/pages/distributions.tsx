@@ -306,7 +306,14 @@ export default function Distributions() {
                     <TableCell>
                       <div className="flex items-center space-x-2">
                         <Calendar className="h-4 w-4 text-gray-400" />
-                        <span>{new Date(event.eventDate).toLocaleString()}</span>
+                        <span>{new Date(event.eventDate).toLocaleString('en-US', { 
+                          year: 'numeric', 
+                          month: 'short', 
+                          day: 'numeric', 
+                          hour: 'numeric', 
+                          minute: '2-digit',
+                          hour12: true 
+                        })}</span>
                       </div>
                     </TableCell>
                     <TableCell>

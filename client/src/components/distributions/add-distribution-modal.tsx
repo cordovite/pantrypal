@@ -34,7 +34,7 @@ export default function AddDistributionModal({ open, onOpenChange }: AddDistribu
   
   // Create a form schema that accepts string for eventDate and converts to Date
   const formSchema = insertDistributionEventSchema.extend({
-    eventDate: z.string().min(1, "Event date is required").transform((val) => new Date(val))
+    eventDate: z.string().min(1, "Event date is required")
   });
 
   type FormData = z.input<typeof formSchema>;
@@ -89,10 +89,14 @@ export default function AddDistributionModal({ open, onOpenChange }: AddDistribu
     },
   });
 
-  const onSubmit = (data: z.output<typeof formSchema>) => {
-    // The schema transformation already converted eventDate to Date
-    console.log("Form data before submission:", data);
-    createEventMutation.mutate(data);
+  const onSubmit = (data: z.input<typeof formSchema>) => {
+    // Convert eventDate string to Date object for backend
+    const formattedData = {
+      ...data,
+      eventDate: new Date(data.eventDate)
+    };
+    console.log("Form data before submission:", formattedData);
+    createEventMutation.mutate(formattedData);
   };
 
   return (
