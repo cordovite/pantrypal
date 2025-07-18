@@ -1,6 +1,7 @@
 import { useMutation } from "@tanstack/react-query";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 import { useToast } from "@/hooks/use-toast";
 import { isUnauthorizedError } from "@/lib/authUtils";
 import { queryClient, apiRequest } from "@/lib/queryClient";
@@ -31,10 +32,15 @@ interface AddDistributionModalProps {
 export default function AddDistributionModal({ open, onOpenChange }: AddDistributionModalProps) {
   const { toast } = useToast();
   
-  // Create a form type that accepts string for eventDate
-  type FormData = Omit<InsertDistributionEvent, 'eventDate'> & { eventDate: string };
+  // Create a form schema that accepts string for eventDate and converts to Date
+  const formSchema = insertDistributionEventSchema.extend({
+    eventDate: z.string().min(1, "Event date is required").transform((val) => new Date(val))
+  });
+
+  type FormData = z.input<typeof formSchema>;
 
   const form = useForm<FormData>({
+    resolver: zodResolver(formSchema),
     defaultValues: {
       name: "",
       description: "",
@@ -82,13 +88,9 @@ export default function AddDistributionModal({ open, onOpenChange }: AddDistribu
     },
   });
 
-  const onSubmit = (data: FormData) => {
-    // Convert eventDate string to Date object
-    const formattedData: InsertDistributionEvent = {
-      ...data,
-      eventDate: new Date(data.eventDate)
-    };
-    createEventMutation.mutate(formattedData);
+  const onSubmit = (data: z.output<typeof formSchema>) => {
+    // The schema transformation already converted eventDate to Date
+    createEventMutation.mutate(data);
   };
 
   return (
