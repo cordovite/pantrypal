@@ -80,9 +80,10 @@ export default function AddDistributionModal({ open, onOpenChange }: AddDistribu
         }, 500);
         return;
       }
+      console.error("Distribution event creation error:", error);
       toast({
         title: "Error",
-        description: "Failed to schedule distribution event",
+        description: error.message || "Failed to schedule distribution event",
         variant: "destructive",
       });
     },
@@ -90,6 +91,7 @@ export default function AddDistributionModal({ open, onOpenChange }: AddDistribu
 
   const onSubmit = (data: z.output<typeof formSchema>) => {
     // The schema transformation already converted eventDate to Date
+    console.log("Form data before submission:", data);
     createEventMutation.mutate(data);
   };
 

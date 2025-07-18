@@ -258,12 +258,17 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/distributions", isAuthenticated, async (req: any, res) => {
     try {
+      console.log("Raw request body:", req.body);
+      console.log("eventDate type:", typeof req.body.eventDate);
+      console.log("eventDate value:", req.body.eventDate);
+      
       const validatedData = insertDistributionEventSchema.parse(req.body);
       const userId = req.user.claims.sub;
       const event = await storage.createDistributionEvent(validatedData, userId);
       res.status(201).json(event);
     } catch (error) {
       if (error instanceof z.ZodError) {
+        console.error("Validation error:", error.errors);
         return res.status(400).json({ message: "Invalid data", errors: error.errors });
       }
       console.error("Error creating distribution event:", error);
