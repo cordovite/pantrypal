@@ -46,7 +46,7 @@ export default function Sidebar() {
             <div className="bg-primary rounded-lg p-2">
               <Package2 className="h-8 w-8 text-white" />
             </div>
-            <h1 className="ml-3 text-xl font-semibold text-gray-900">Food Bank</h1>
+            <h1 className="ml-3 text-xl font-semibold text-gray-900">PantryPal</h1>
           </div>
 
           {/* Navigation */}
