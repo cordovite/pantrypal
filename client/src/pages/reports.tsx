@@ -64,13 +64,27 @@ export default function Reports() {
     quantity,
   }));
 
+  // Create a mapping for donation type display names
+  const getDonationTypeLabel = (type: string) => {
+    const typeMap: { [key: string]: string } = {
+      'food': 'Food Donation',
+      'monetary': 'Monetary Donation', 
+      'other': 'Other Donation',
+      '0': 'Food Donation',
+      '1': 'Monetary Donation',
+      '2': 'Other Donation'
+    };
+    return typeMap[type] || type.charAt(0).toUpperCase() + type.slice(1);
+  };
+
   const donationsByType = donations.reduce((acc: any, donation: any) => {
-    acc[donation.donationType] = (acc[donation.donationType] || 0) + 1;
+    const typeLabel = getDonationTypeLabel(donation.donationType);
+    acc[typeLabel] = (acc[typeLabel] || 0) + 1;
     return acc;
   }, {});
 
   const donationsChartData = Object.entries(donationsByType).map(([type, count]) => ({
-    type: type.charAt(0).toUpperCase() + type.slice(1),
+    type,
     count,
   }));
 
@@ -230,7 +244,7 @@ export default function Reports() {
                     cx="50%"
                     cy="50%"
                     labelLine={false}
-                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    label={({ type, percent }) => `${type} ${(percent * 100).toFixed(0)}%`}
                     outerRadius={80}
                     fill="#8884d8"
                     dataKey="count"
