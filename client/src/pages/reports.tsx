@@ -87,31 +87,6 @@ export default function Reports() {
 
   const COLORS = ['#059669', '#0D9488', '#10B981', '#34D399', '#6EE7B7'];
 
-  const handleExportReport = () => {
-    const reportData = {
-      dateRange,
-      stats,
-      inventory: inventory.length,
-      donations: donations.length,
-      distributions: distributions.length,
-      generatedAt: new Date().toISOString(),
-    };
-
-    const dataStr = JSON.stringify(reportData, null, 2);
-    const dataBlob = new Blob([dataStr], { type: 'application/json' });
-    const url = URL.createObjectURL(dataBlob);
-    const link = document.createElement('a');
-    link.href = url;
-    link.download = `food-bank-report-${new Date().toISOString().split('T')[0]}.json`;
-    link.click();
-    URL.revokeObjectURL(url);
-
-    toast({
-      title: "Success",
-      description: "Report exported successfully",
-    });
-  };
-
   if (isLoading || !isAuthenticated) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -130,16 +105,7 @@ export default function Reports() {
             View comprehensive reports and analytics for your food bank operations.
           </p>
         </div>
-        <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none space-x-3">
-          <Button variant="outline" onClick={handleExportReport}>
-            <Download className="h-4 w-4 mr-2" />
-            Export Report
-          </Button>
-          <Button variant="outline">
-            <FileText className="h-4 w-4 mr-2" />
-            Print Report
-          </Button>
-        </div>
+
       </div>
 
       {/* Report Filters */}
@@ -256,25 +222,35 @@ export default function Reports() {
             <CardTitle>Donations by Type</CardTitle>
           </CardHeader>
           <CardContent>
-            <ResponsiveContainer width="100%" height={300}>
-              <PieChart>
-                <Pie
-                  data={donationsChartData}
-                  cx="50%"
-                  cy="50%"
-                  labelLine={false}
-                  label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
-                  outerRadius={80}
-                  fill="#8884d8"
-                  dataKey="count"
-                >
-                  {donationsChartData.map((entry, index) => (
-                    <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
-                  ))}
-                </Pie>
-                <Tooltip />
-              </PieChart>
-            </ResponsiveContainer>
+            {donationsChartData.length > 0 ? (
+              <ResponsiveContainer width="100%" height={300}>
+                <PieChart>
+                  <Pie
+                    data={donationsChartData}
+                    cx="50%"
+                    cy="50%"
+                    labelLine={false}
+                    label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                    outerRadius={80}
+                    fill="#8884d8"
+                    dataKey="count"
+                  >
+                    {donationsChartData.map((entry, index) => (
+                      <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
+                    ))}
+                  </Pie>
+                  <Tooltip />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div className="flex items-center justify-center h-[300px] text-gray-500">
+                <div className="text-center">
+                  <Heart className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                  <p>No donation data available</p>
+                  <p className="text-sm">Start logging donations to see charts here</p>
+                </div>
+              </div>
+            )}
           </CardContent>
         </Card>
       </div>
@@ -285,15 +261,25 @@ export default function Reports() {
           <CardTitle>Monthly Donations Trend</CardTitle>
         </CardHeader>
         <CardContent>
-          <ResponsiveContainer width="100%" height={300}>
-            <LineChart data={monthlyDonationsData}>
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey="month" />
-              <YAxis />
-              <Tooltip />
-              <Line type="monotone" dataKey="donations" stroke="#059669" strokeWidth={2} />
-            </LineChart>
-          </ResponsiveContainer>
+          {monthlyDonationsData.length > 0 ? (
+            <ResponsiveContainer width="100%" height={300}>
+              <LineChart data={monthlyDonationsData}>
+                <CartesianGrid strokeDasharray="3 3" />
+                <XAxis dataKey="month" />
+                <YAxis />
+                <Tooltip />
+                <Line type="monotone" dataKey="donations" stroke="#059669" strokeWidth={2} />
+              </LineChart>
+            </ResponsiveContainer>
+          ) : (
+            <div className="flex items-center justify-center h-[300px] text-gray-500">
+              <div className="text-center">
+                <TrendingUp className="h-12 w-12 mx-auto mb-4 text-gray-300" />
+                <p>No donation trend data available</p>
+                <p className="text-sm">Start logging donations to see trends here</p>
+              </div>
+            </div>
+          )}
         </CardContent>
       </Card>
 
@@ -310,20 +296,20 @@ export default function Reports() {
               <div>
                 <h4 className="font-medium mb-2">Inventory Overview</h4>
                 <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• Total items in inventory: {stats?.totalItems || 0}</li>
-                  <li>• Low stock items: {stats?.lowStockCount || 0}</li>
-                  <li>• Items expiring soon: {stats?.expiringCount || 0}</li>
-                  <li>• Most stocked category: {inventoryChartData.length > 0 ? inventoryChartData.reduce((a, b) => a.quantity > b.quantity ? a : b).category : 'N/A'}</li>
+                  <li>Total items in inventory: {stats?.totalItems || 0}</li>
+                  <li>Low stock items: {stats?.lowStockCount || 0}</li>
+                  <li>Items expiring soon: {stats?.expiringCount || 0}</li>
+                  <li>Most stocked category: {inventoryChartData.length > 0 ? inventoryChartData.reduce((a, b) => a.quantity > b.quantity ? a : b).category : 'N/A'}</li>
                 </ul>
               </div>
               
               <div>
                 <h4 className="font-medium mb-2">Donations & Distributions</h4>
                 <ul className="text-sm text-gray-600 space-y-1">
-                  <li>• Total donations this month: {stats?.monthlyDonations || 0}</li>
-                  <li>• Total families served: {stats?.familiesServed || 0}</li>
-                  <li>• Upcoming events: {stats?.upcomingEvents || 0}</li>
-                  <li>• Most common donation type: {donationsChartData.length > 0 ? donationsChartData.reduce((a, b) => a.count > b.count ? a : b).type : 'N/A'}</li>
+                  <li>Total donations this month: {stats?.monthlyDonations || 0}</li>
+                  <li>Total families served: {stats?.familiesServed || 0}</li>
+                  <li>Upcoming events: {stats?.upcomingEvents || 0}</li>
+                  <li>Most common donation type: {donationsChartData.length > 0 ? donationsChartData.reduce((a, b) => a.count > b.count ? a : b).type : 'N/A'}</li>
                 </ul>
               </div>
             </div>
@@ -331,10 +317,10 @@ export default function Reports() {
             <div className="mt-6 p-4 bg-yellow-50 rounded-lg">
               <h4 className="font-medium text-yellow-800 mb-2">Recommendations</h4>
               <ul className="text-sm text-yellow-700 space-y-1">
-                {stats?.lowStockCount > 0 && <li>• Consider reaching out to donors for items with low stock</li>}
-                {stats?.expiringCount > 0 && <li>• Schedule distribution events to prioritize expiring items</li>}
-                <li>• Continue tracking donation patterns to predict future inventory needs</li>
-                <li>• Regular inventory audits help maintain accurate stock levels</li>
+                {stats?.lowStockCount > 0 && <li>Consider reaching out to donors for items with low stock</li>}
+                {stats?.expiringCount > 0 && <li>Schedule distribution events to prioritize expiring items</li>}
+                <li>Continue tracking donation patterns to predict future inventory needs</li>
+                <li>Regular inventory audits help maintain accurate stock levels</li>
               </ul>
             </div>
           </div>
