@@ -262,7 +262,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log("eventDate type:", typeof req.body.eventDate);
       console.log("eventDate value:", req.body.eventDate);
       
-      const validatedData = insertDistributionEventSchema.parse(req.body);
+      // Convert eventDate string to Date object before validation
+      const processedBody = {
+        ...req.body,
+        eventDate: req.body.eventDate ? new Date(req.body.eventDate) : undefined
+      };
+      
+      console.log("Processed eventDate:", processedBody.eventDate);
+      console.log("Is Date valid?", processedBody.eventDate instanceof Date && !isNaN(processedBody.eventDate));
+      
+      const validatedData = insertDistributionEventSchema.parse(processedBody);
       const userId = req.user.claims.sub;
       const event = await storage.createDistributionEvent(validatedData, userId);
       res.status(201).json(event);

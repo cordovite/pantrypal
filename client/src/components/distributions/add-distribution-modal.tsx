@@ -90,10 +90,10 @@ export default function AddDistributionModal({ open, onOpenChange }: AddDistribu
   });
 
   const onSubmit = (data: z.input<typeof formSchema>) => {
-    // Convert eventDate string to Date object for backend
+    // Keep eventDate as string since backend expects string
     const formattedData = {
       ...data,
-      eventDate: new Date(data.eventDate)
+      eventDate: data.eventDate // Keep as string
     };
     console.log("Form data before submission:", formattedData);
     createEventMutation.mutate(formattedData);

@@ -127,6 +127,8 @@ PantryPal is a comprehensive food bank management system built with a modern web
 
 ## Changelog
 
+- July 19, 2025. Fixed distribution event date validation - backend now properly converts datetime-local string to Date object
+- July 19, 2025. Fixed reports page - removed non-working export buttons, added empty state messages for charts, fixed bullet points
 - January 18, 2025. Fixed critical distribution event date validation bug - converted string to Date object properly
 - January 18, 2025. Fixed time display formatting to show correct AM/PM times instead of incorrect timezone conversion
 - January 18, 2025. Updated branding from "Food Bank" to "PantryPal" in sidebar
